@@ -1,0 +1,7 @@
+DTO is used to contain the objects that the project interact with.
+Tree goes as follow: Khoa -> Lop == NamHoc -> SinhVien.
+-Khoa hold the faculty information and all the class within it in a span of NamHoc.
+-NamHoc simply provide snapshot of a specific year.
+    +Khoa and NamHoc work together to create Lop. Khoa create the Lop, NamHoc manage them.
+-Lop hold the students within the class as well as performing basic operation(add/delete, search, etc.).
+-SinhVien is the smallest, containing only the information of the student inside.
