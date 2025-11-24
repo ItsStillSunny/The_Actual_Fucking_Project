@@ -8,6 +8,7 @@
 #include <iomanip>
 #include <algorithm>
 #include <limits>
+#include <ctime>
 #include <windows.h>
 #include "../DTO/Khoa.h"
 #include "../DTO/SinhVien.h"
@@ -41,7 +42,50 @@ class QuanLySinhVien{
 
         // Them sinh vien moi
         void themSinhVien(){
+            ClearScreen();
+            while(true){
+                cout << "\t\t\t\t\t\t--- THEM SINH VIEN MOI ---\n\n";
+                string namhoc;
+                cout << "\t\t Nhap nam hoc (ex: " << currentYear << "): \n";
+                cout << "Valid range is from 1995 to " << currentYear << endl;
+                getline(cin, namhoc);
+                if (!YearValidator(namhoc)){
+                    break;
+                }
+                else{
+                    SetColor(12);
+                    cout << "\t\t [!] Nam hoc khong hop le! Vui long nhap lai.\n";
+                    
+                    //wait (value/1000) seconds so user can read the error message
+                    Sleep(5000); 
 
+                    //clear the errors + user error 
+                    ClearLines(4);
+                }
+            }
+
+            while(true){
+                string makhoa;
+                cout << "\t\t Nhap ma khoa (ex: 101): ";
+                cout << "Valid values: 101, 102, 104, 105, 106, 107, 117, 118, 121. \n";
+                getline(cin, makhoa);
+
+                Khoa* k = FindKhoa(makhoa);
+                if (!k) {
+                    SetColor(12); // Red
+                    cout << "\t\t [LOI] Khong tim thay khoa voi ma: " << makhoa << "\n";
+
+                    //wait (value/1000) seconds so user can read the error message
+                    Sleep(5000); 
+
+                    //clear the errors + user error 
+                    ClearLines(4);
+                }
+            }
+
+
+
+                
         }   
         
         // Them sinh vien tu file
@@ -95,9 +139,15 @@ class QuanLySinhVien{
         }
 
         //mill
+
+        //get current year
+            time_t t = time(nullptr);
+            tm* now = localtime(&t);
+            int currentYear = now->tm_year + 1900;
+
         //showing intro
         void intro() {
-            system("cls");
+            ClearScreen();
             cout << "============================================================\n";
             cout << "         CHAO MUNG DEN VOI HE THONG QUAN LY SINH VIEN \n";
             cout << "                 TRUONG DAI HOC ABC - CONSOLE APP\n";
@@ -113,7 +163,7 @@ class QuanLySinhVien{
         void menu() {
             int user_choice = -1;
             do {
-                system("cls");
+                ClearScreen();
                 cout << "\n===============================================\n";
                 cout << "    CHUONG TRINH QUAN LY SINH VIEN\n";
                 cout << "===============================================\n";
@@ -148,8 +198,8 @@ class QuanLySinhVien{
                     case 9: xuatTheoLop(); break;
                     case 10: xuatToanTruong(); break;
                     case 11: xuatFileLop(); break;
-                    case 0: system("cls"); cout << "Thoat...\n"; break;
-                    default: cout << "Lua user_choice khong hop le!\n"; system("pause"); break;
+                    case 0: ClearScreen(); cout << "Thoat...\n"; break;
+                    default: cout << "Lua user_choice khong hop le!\n"; Pause(); break;
                 }
             } while (user_choice != 0);
         }
@@ -179,4 +229,35 @@ class QuanLySinhVien{
             }
             return nullptr;
         }
+
+        //check for vampires/ time travellers
+        bool YearValidator(string Year){
+            
+
+            int YearAsInt = stoi(Year);
+
+            if (YearAsInt < 1995 || YearAsInt > currentYear){
+                return false;
+            }
+        }
+
+        //clear "lineCount" lines above and move up the same number of lines deleted
+        void ClearLines(int lineCount) {
+            for (int i = 0; i < lineCount; ++i) {
+                cout << "\033[A";  // Move cursor UP one line
+                cout << "\033[2K"; // Erase the entire line
+            }
+        }
+
+        //clear the screen
+        void ClearScreen(){
+            system("cls");
+        }
+
+        //pause the screen
+        void Pause(){
+            system("pause");
+        }
+
+
 };  
