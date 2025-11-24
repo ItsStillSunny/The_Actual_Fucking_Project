@@ -43,15 +43,23 @@ class QuanLySinhVien{
         // Them sinh vien moi
         void themSinhVien(){
             ClearScreen();
+
+            string namhoc, makhoa;
+            Khoa* k = nullptr;
+            NamHoc* n = nullptr;
+
             while(true){
-                cout << "\t\t\t\t\t\t--- THEM SINH VIEN MOI ---\n\n";
-                string namhoc;
+                cout << "\t\t\t\t\t--- THEM SINH VIEN MOI ---\n\n";
                 cout << "\t\t Nhap nam hoc (ex: " << currentYear << "): \n";
                 cout << "Valid range is from 1995 to " << currentYear << endl;
                 getline(cin, namhoc);
-                if (!YearValidator(namhoc)){
+
+                //is it valid?
+                //yes
+                if (YearValidator(namhoc)){
                     break;
                 }
+                //no
                 else{
                     SetColor(12);
                     cout << "\t\t [!] Nam hoc khong hop le! Vui long nhap lai.\n";
@@ -65,27 +73,63 @@ class QuanLySinhVien{
             }
 
             while(true){
-                string makhoa;
                 cout << "\t\t Nhap ma khoa (ex: 101): ";
                 cout << "Valid values: 101, 102, 104, 105, 106, 107, 117, 118, 121. \n";
                 getline(cin, makhoa);
 
-                Khoa* k = FindKhoa(makhoa);
-                if (!k) {
-                    SetColor(12); // Red
-                    cout << "\t\t [LOI] Khong tim thay khoa voi ma: " << makhoa << "\n";
+                k = FindKhoa(makhoa);
+                if (k != nullptr) {
+                    //theres a valid khoa
+                    //find namhoc next
+                    n = k->get_NamHoc(namhoc);
+                    if (n != nullptr){
+                        //theres a valid namhoc
+                        //this ngga not classless anymore, yay
+                        break;
+                        //success case
+                    }
+                    //got Khoa, no Lop
+                    else{
+                        SetColor(12);
+                        cout << "\t\t [LOI] Nam hoc khong ton tai trong khoa nay!\n";
+                        Sleep(5000);
+                        ClearLines(4); 
+                        continue;
+                    }
+                //neither found
+                }
+                SetColor(12); 
+                cout << "\t\t [LOI] Khong tim thay khoa voi ma: " << makhoa << "\n";
+                Sleep(1000); 
+                ClearLines(4);
+            }
 
-                    //wait (value/1000) seconds so user can read the error message
-                    Sleep(5000); 
+            string ho, ten, gioitinh, ngaysinh, diachi;
+            cout << "Ho va ten lot: "; getline(cin, ho);
+            cout << "Ten: "; getline(cin, ten);
+            cout << "Gioi tinh: "; getline(cin, gioitinh);
+            cout << "Ngay sinh: "; getline(cin, ngaysinh);
+            cout << "Dia chi: "; getline(cin, diachi);
 
-                    //clear the errors + user error 
-                    ClearLines(4);
+            SinhVien sv(ho, ten, gioitinh, ngaysinh, diachi, "", "");
+
+            bool added = false;
+
+            for (auto& lop : n->get_DanhSachLop()) {
+            // lop.Add_SinhVien returns TRUE if added, FALSE if full (MAX_SV)
+            if (lop.Add_SinhVien(sv)) {
+                    SetColor(10); // Green
+                    cout << "\n\t\t [THANH CONG] Sinh vien da duoc xep vao lop: " << lop.Get_TenLop() << "\n";
+                    added = true;
+                    break; // Stop checking other classes
                 }
             }
 
-
-
-                
+            if (!added) {
+                SetColor(12);
+                cout << "\n\t\t [THAT BAI] Tat ca cac lop trong khoa nay deu da day!\n";
+            }
+            Pause();    
         }   
         
         // Them sinh vien tu file
@@ -180,7 +224,7 @@ class QuanLySinhVien{
                 cout << "11 | Xuat file lop (.txt)\n";
                 cout << " 0 | Thoat\n";
                 cout << "===============================================\n";
-                cout << "Nhap lua user_choice: ";
+                cout << "Nhap lua chon: ";
                 if (!(cin >> user_choice)) {
                     cin.clear();
                     cin.ignore(numeric_limits<streamsize>::max(), '\n');
@@ -222,7 +266,7 @@ class QuanLySinhVien{
         { "121", { "Kien truc",           "KT"    } }
         };
 
-        // In BLL/QuanLySinhVien.h -> private:
+        //
         Khoa* FindKhoa(const string& maKhoa) {
             for (auto& k : DanhSachKhoa) {
                 if (k.get_MaKhoa() == maKhoa) return &k;
@@ -232,11 +276,12 @@ class QuanLySinhVien{
 
         //check for vampires/ time travellers
         bool YearValidator(string Year){
-            
-
             int YearAsInt = stoi(Year);
 
-            if (YearAsInt < 1995 || YearAsInt > currentYear){
+            if (YearAsInt > 1995 || YearAsInt < currentYear){
+                return true;
+            }
+            else{
                 return false;
             }
         }
