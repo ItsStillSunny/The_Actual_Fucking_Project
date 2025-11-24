@@ -38,7 +38,7 @@ class QuanLySinhVien{
             }
         }
 
-        //the thingy mazingies used for the 11 human souls
+        //the thingies mazingies used for the 11 human souls
 
         // Them sinh vien moi
         void themSinhVien(){
@@ -49,14 +49,14 @@ class QuanLySinhVien{
             NamHoc* n = nullptr;
 
             while(true){
-                cout << "\t\t\t\t\t--- THEM SINH VIEN MOI ---\n\n";
-                cout << "\t\t Nhap nam hoc (ex: " << currentYear << "): \n";
+                cout << "\t\t--- THEM SINH VIEN MOI ---\n";
+                cout << "Nhap nam hoc (ex: " << currentYear << "): \n";
                 cout << "Valid range is from 1995 to " << currentYear << endl;
                 getline(cin, namhoc);
 
                 //is it valid?
                 //yes
-                if (YearValidator(namhoc)){
+                if (YearValidator(namhoc) == false){
                     break;
                 }
                 //no
@@ -65,10 +65,13 @@ class QuanLySinhVien{
                     cout << "\t\t [!] Nam hoc khong hop le! Vui long nhap lai.\n";
                     
                     //wait (value/1000) seconds so user can read the error message
-                    Sleep(5000); 
+                    Sleep(1500); 
 
                     //clear the errors + user error 
-                    ClearLines(4);
+                    ClearLines(5);
+
+                    //reset color
+                    SetColor(7); 
                 }
             }
 
@@ -92,7 +95,7 @@ class QuanLySinhVien{
                     else{
                         SetColor(12);
                         cout << "\t\t [LOI] Nam hoc khong ton tai trong khoa nay!\n";
-                        Sleep(5000);
+                        Sleep(1500);
                         ClearLines(4); 
                         continue;
                     }
@@ -104,6 +107,10 @@ class QuanLySinhVien{
                 ClearLines(4);
             }
 
+            //standard stuff
+            //yea i dont care anymore about dob, you can be a vampire or time traveller, whatever float your boat
+
+            //EDIT: add dob protection against vampire and/or time traveller, fuck them, deadline 25/11/2025
             string ho, ten, gioitinh, ngaysinh, diachi;
             cout << "Ho va ten lot: "; getline(cin, ho);
             cout << "Ten: "; getline(cin, ten);
@@ -134,6 +141,8 @@ class QuanLySinhVien{
         
         // Them sinh vien tu file
         void themSinhVienTuFile(){
+            ClearScreen();
+            cout << "\t\t\t\t\t\t--- THEM SINH VIEN TU FILE ---\n\n";
 
         }
 
