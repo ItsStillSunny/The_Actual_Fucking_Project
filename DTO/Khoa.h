@@ -19,7 +19,7 @@ class Khoa{
     public:
         //default constructor + actual constructor
         Khoa(){}
-        Khoa(string makhoa, string tenkhoa, const array<string, 3>& prefix_of_khoa) : MaKhoa(makhoa), TenKhoa(tenkhoa) {
+        Khoa(string makhoa, string tenkhoa, string Lop_PostFix) : MaKhoa(makhoa), TenKhoa(tenkhoa) {
 
             //get current year
             time_t t = time(nullptr);
@@ -36,8 +36,9 @@ class Khoa{
 
                 //       24       + T_DT4  = 24T_DT4
                 //shortYearString + prefix = TenLop
-                for (const string &prefix : prefix_of_khoa){
-                    string TenLop = shortYearString + prefix;
+                //i loop from 1 -> 4 aka the 4 Lop of a Khoa
+                for (int i = 0; i <= 4; i++){
+                    string TenLop = shortYearString + Lop_PostFix + to_string(i);
 
                     //create Lop based on those information
                     Lop newLop(TenLop, MaKhoa, yearAsString);
@@ -46,9 +47,13 @@ class Khoa{
                 DanhSachNamHoc.push_back(newYear);
             }
         }
+
+
         //getters/setters
         string get_MaKhoa() const {return MaKhoa;}
         string get_TenKhoa() const {return TenKhoa;}
+        
+
 
         //write (BLL)
         vector<NamHoc> &get_DanhSachNamHoc() { 
@@ -59,5 +64,13 @@ class Khoa{
         const vector<NamHoc> &get_DanhSachNamHoc() const { 
             return DanhSachNamHoc; 
         } 
+
+        //search NamHoc
+        NamHoc* get_NamHoc(string nam) {
+            for (auto& nh : DanhSachNamHoc) {
+                if (nh.get_TenNamHoc() == nam) return &nh;
+            }
+            return nullptr;
+        }
 };
 
