@@ -220,6 +220,7 @@ class Lop{
             }
         }
 
+        //How many SinhVien got MaKhoa?
         int Count_Assigned_SinhVien(const string& maKhoa) {
         int count = 0;
         for (const SinhVien& sv : ds_SV) {

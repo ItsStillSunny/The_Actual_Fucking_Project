@@ -226,23 +226,178 @@ class QuanLySinhVien{
                     
             cout << "\t\t Nhap Ten Lop cua sinh vien: ";
             getline(cin, tenLop);
-            Normalize_TenLop(tenLop); 
             
             cout << "\t\t Nhap Ho Lot cua sinh vien: ";
             getline(cin, hoLot);
             
             cout << "\t\t Nhap Ten cua sinh vien: ";
             getline(cin, ten);
+
+            //find the Lop that SinhVien is in
+            Lop* targetLop = nullptr;
+            
+            // Iterate through all Faculties (Khoa)
+            for (auto& khoa : DanhSachKhoa) {
+                // Iterate through all Years (NamHoc) within that Faculty
+                for (auto& nam : khoa.get_DanhSachNamHoc()) {
+                    // Try to find the Lop in this Year
+                    Lop* found = nam.timLop(tenLop);
+                    if (found != nullptr) {
+                        targetLop = found;
+                        break;
+                    }
+                }
+                if (targetLop != nullptr) break;
+            }
+
+            //if Lop wasnt found
+            if (targetLop == nullptr){
+                cout << "Khong tim thay lop chua sinh vien." << endl;
+                Pause();
+                return;
+            }
+
+            //Found Lop, start finding by SinhVien in that Lop now
+            SinhVien* sv = targetLop->Select_SinhVien_By_Name(hoLot, ten);
+            
+            //cant find
+            if (sv == nullptr){
+                cout << "Khong tim thay sinh vien." << endl;
+                Pause();
+                return;
+            }
+            //can find, but already has MSSV
+            else if (sv != nullptr && sv->Has_MSSV() == true){
+                cout << "Tim thay sinh vien, sinh vien da co MSSV, khong the chinh sua.";
+                Pause();
+                return;
+            }
+            //fucking finally
+            else{
+                while (true){
+                    ClearScreen();
+                    cout << "\t\t\t--- THONG TIN SINH VIEN ---\n";
+                    //print the SinhVien's information like this:
+                    //-------------------------------
+                    //blah blah blah
+                    //-------------------------------
+                    cout << string(60, '-') << endl;
+                    sv->Print_SinhVien(); 
+                    cout << string(60, '-') << endl;
+
+                    //the list of options to change
+                    cout << " 1. Sua Ho Lot\n";
+                    cout << " 2. Sua Ten\n";
+                    cout << " 3. Sua Gioi Tinh\n";
+                    cout << " 4. Sua Ngay Sinh\n";
+                    cout << " 5. Sua Dia Chi\n";
+                    cout << " 0. Hoan tat\n";
+                    cout << string(60, '-') << endl;
+                    cout << " Nhap lua chon: ";
+                    
+                    int choice;
+                    if (!(cin >> choice)) {
+                        cin.clear();
+                        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                        continue;
+                    }
+                    cin.ignore(); // Clear buffer
+
+                    if (choice == 0) {
+                        break;
+                    }
+
+                    string newVal;
+                    cout << " Nhap gia tri moi: ";
+                    getline(cin, newVal);
+
+                    switch (choice) {
+                        case 1: sv->Set_HoLot(newVal); break;
+                        case 2: sv->Set_Ten(newVal); break;
+                        case 3: sv->Set_GioiTinh(newVal); break;
+                        case 4: sv->Set_NgaySinh(newVal); break;
+                        case 5: sv->Set_DiaChi(newVal); break;
+                        default: 
+                            cout << " Lua chon khong hop le.\n"; 
+                            Sleep(1000); 
+                            continue;
+                    }
+                    
+                    SetColor(10); // Green
+                    cout << "\t\t [CAP NHAT THANH CONG]\n";
+                    Sleep(1000);
+                    SetColor(7); // Reset color
+                    }
+            }
         }
 
         // Cap MSSV (toan truong)
         void capMSSV(){
+            ClearScreen();
+            cout << "\t\t\t\t\t\t--- CAP MSSV TOAN TRUONG ---\n\n";
 
+            for (auto &khoa : DanhSachKhoa){
+                string currentMaKhoa = khoa.get_MaKhoa();
+
+                for (auto &nam : khoa.get_DanhSachNamHoc()){
+                    int StartCount = 0;
+                    for (auto &lop : nam.get_DanhSachLop()){
+                        StartCount += lop.Count_Assigned_SinhVien()
+                    }
+
+                    for (auto &lop : nam.get_DanhSachLop()){
+                        //skip empty classes
+                        if (lop.Get_SoLuongSV() == 0){
+                            continue;
+                        }
+
+                        bool success_indicator = lop.Assign_MSSV_To_Lop(StartCount);
+
+                        if (!success_indicator){
+                            SetColor(12);
+                            cout << "Lop: " << lop.Get_TenLop << " chua duoc sap xep, khong the cap MSSV toan truong.";
+                            Pause();
+                            return;
+                        }
+                    }
+                }
+            }
+            SetColor(10);
+            cout << "Da cap MSSV cho toan truong thanh cong.";
+            Pause();
         }
 
         // Cap Email (toan truong)
         void capEmail(){
+            ClearScreen();
+            cout << "\t\t\t\t\t\t--- CAP MSSV TOAN TRUONG ---\n\n";
 
+            for (auto &khoa : DanhSachKhoa){
+                for (auto &nam : khoa.get_DanhSachNamHoc()){
+                    for (auto &lop : nam.get_DanhSachLop()){
+                    
+
+                    for (auto &lop : nam.get_DanhSachLop()){
+                        //skip empty classes
+                        if (lop.Get_SoLuongSV() == 0){
+                            continue;
+                        }
+
+                        bool success_indicator = lop.Assign_Email_To_Lop();
+
+                        if (!success_indicator){
+                            SetColor(12);
+                            cout << "Lop: " << lop.Get_TenLop << " chua duoc cap MSSV, khong the cap Email toan truong.";
+                            Pause();
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+            SetColor(10);
+            cout << "Da cap Email cho toan truong thanh cong.";
+            Pause();
         }
 
         // Tim kiem sinh vien
@@ -424,15 +579,9 @@ class QuanLySinhVien{
             system("cls");
         }
 
-        //pause the screen
+        //pause the program until any user input is detected
         void Pause(){
             system("pause");
-        }
-
-        void Normalize_TenLop(string &TenLop){
-            for (auto &x : TenLop){
-                x = toupper(x);
-            }
         }
 
 
