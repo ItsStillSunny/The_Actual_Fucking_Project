@@ -262,5 +262,5 @@ class Lop{
     }
 
     //read
-    const vector<SinhVien>& getDanhSach() const { return ds_SV; }
+    const vector<SinhVien>& get_DanhSach() const { return ds_SV; }
 };

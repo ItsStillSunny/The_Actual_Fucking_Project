@@ -104,7 +104,7 @@ class SinhVien{
 
 
         //format then save to file
-        string toFile() const{
+        string to_File() const{
             return MSSV + "|" + Get_HoVaTen() + "|" + GioiTinh + "|" +
                NgaySinh + "|" + DiaChi + "|" + Email + "|" +
                MaKhoa + "|" + NamHoc;

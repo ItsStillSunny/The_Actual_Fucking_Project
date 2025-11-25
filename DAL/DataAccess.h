@@ -71,5 +71,55 @@ class DataAccess{
             return Single_SinhVien;
         }
 
+        //save data
+        static void SaveData(const string &DataFolder, const vector<Khoa> database){
+            //if folder (named DataFolder) doesnt exist, create it
+            if (!fs::exists(DataFolder)){
+                fs::create_directory(DataFolder);
+            }
+
+            //find where it is
+            fs::path AbsolutePath = fs::absolute(DataFolder);
+            cout << "[DAL] data is stored at: " << AbsolutePath << endl;
+
+            //save all files within DataFolder
+
+            //set file count for easier debug if shit went sour
+            int FileCount = 0;
+            //loop through everything in order of Khoa -> NamHoc -> Lop, yea no SinhVien because fuck 'em thats why
+            for (const auto& khoa : database) {
+                for (const auto& namHoc : khoa.get_DanhSachNamHoc()) {
+                    for (const auto& lop : namHoc.get_DanhSachLop()) {
+                        if (lop.Get_SoLuongSV() > 0) {
+                            // Build path: Data/101_24CDT1.txt
+                            string filename = folderName + "/" + khoa.get_MaKhoa() + "_" + lop.Get_TenLop() + ".txt";
+                            SaveLopToFile(filename, lop);
+                            fileCount++;
+                        }
+                    }
+                }
+            }
+
+            if (FileCount == 0){
+                cout << "No data to be saved.";
+            }
+            else{
+                cout << "Successfully saved: " << FileCount << " files." << endl;
+            }
+        }
+
+        //save just a single Lop
+        static void SaveLopToFile(const string &FileName, const Lop &lop){
+            ofstream file(FileName);
+            if (file.is_open()){
+                for (const auto &sv : lop.get_DanhSach){
+                    file << sv.to_File() << endl;
+                }
+                file.close();
+            }
+            else{
+                cout << "[DAL] Can't write to file named: " << FileName << "." << endl;
+            }
+        }
 
 };
