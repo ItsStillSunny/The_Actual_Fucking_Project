@@ -92,9 +92,9 @@ class DataAccess{
                     for (const auto& lop : namHoc.get_DanhSachLop()) {
                         if (lop.Get_SoLuongSV() > 0) {
                             // Build path: Data/101_24CDT1.txt
-                            string filename = folderName + "/" + khoa.get_MaKhoa() + "_" + lop.Get_TenLop() + ".txt";
+                            string filename = DataFolder + "/" + khoa.get_MaKhoa() + "_" + lop.Get_TenLop() + ".txt";
                             SaveLopToFile(filename, lop);
-                            fileCount++;
+                            FileCount++;
                         }
                     }
                 }
@@ -112,7 +112,7 @@ class DataAccess{
         static void SaveLopToFile(const string &FileName, const Lop &lop){
             ofstream file(FileName);
             if (file.is_open()){
-                for (const auto &sv : lop.get_DanhSach){
+                for (const auto &sv : lop.get_DanhSach()){
                     file << sv.to_File() << endl;
                 }
                 file.close();

@@ -56,7 +56,7 @@ class QuanLySinhVien{
 
                 //is it valid?
                 //yes
-                if (YearValidator(namhoc) == false){
+                if (YearValidator(namhoc) == true){
                     break;
                 }
                 //no
@@ -109,7 +109,6 @@ class QuanLySinhVien{
 
             //standard stuff
             //yea i dont care anymore about dob, you can be a vampire or time traveller, whatever float your boat
-
             //EDIT: add dob protection against vampire and/or time traveller, fuck them, deadline 25/11/2025
             string ho, ten, gioitinh, ngaysinh, diachi;
             cout << "Ho va ten lot: "; getline(cin, ho);
@@ -144,16 +143,96 @@ class QuanLySinhVien{
             ClearScreen();
             cout << "\t\t\t\t\t\t--- THEM SINH VIEN TU FILE ---\n\n";
 
+            string filePath;
+            cout << "\t\t Nhap duong dan file: (absolute path | ex: D:/something/abc)"
+            getline(cin, filePath);
+
+            //DAL importing work
+            vector<SinhVien> importedList = DataAccess::LoadSingleData(filePath);
+
+            if (importedList.empty()){
+                cout << "File doesn't exist/ is empty";
+                Pause();
+                return;
+            }
+
+            cout << "\n\t\t Dang xu ly: " << importedList.size() << " sinh vien.";
+
+            int failed = 0;
+            int success = 0;
+
+            for (const auto &sv : importedList){
+                // Find Faculty
+                Khoa* k = FindKhoa(sv.Get_MaKhoa());
+                if (!k) { failCount++; continue; }
+
+                // Find Year
+                NamHoc* n = k->timNamHoc(sv.Get_NamHoc());
+                if (!n) { failCount++; continue; }
+
+                // Auto-Assign Overflow (one class full, onto the next one)
+                bool added = false;
+                for (auto& lop : n->get_DanhSachLop()) {
+                    if (lop.Add_SinhVien(sv)) {
+                        success++;
+                        added = true;
+                        break; 
+                    }
+                }
+                    //unable to add
+                    if (!added) failed++;
+            }
+
+            cout << "Successfully added: " << success << " sinh vien.";
+            if (failed > 0){
+                cout << "Khong the them vao: " << failed << " sinh vien (loi file/loi du lieu)"
+            }
+            Pause();
         }
 
         // Sap xep danh sach sinh vien
         void sapXepDanhSach(){
+            ClearScreen();
+            cout << "\t\t\t\t\t\t--- SAP XEP SINH VIEN ---\n\n";
 
+            Lop *lop = Select_Lop_UI();
+
+            //invalid choice/ cancelled choice
+            if (!lop){
+                Pause();
+                return;
+            }
+
+            //empty
+            if (lop->Get_SoLuongSV() == 0){
+                cout << "Lop khong co sinh vien." << endl;
+            }
+            else{
+                lop->Sort_SinhVien_In_Lop_By_Ten();
+
+                cout << "Da sap xep lop theo ho va ten. " << endl;
+
+                lop->Xuat_ds_SV();
+            }
+            Pause();
         }
 
         // Sua thong tin sinh vien
         void suaThongTin(){
+            system("cls");
+            cout << "\t\t\t\t\t\t--- SUA THONG TIN SINH VIEN (CHUA CAP MSSV) ---\n\n";
 
+            string tenLop, hoLot, ten;
+                    
+            cout << "\t\t Nhap Ten Lop cua sinh vien: ";
+            getline(cin, tenLop);
+            Normalize_TenLop(tenLop); 
+            
+            cout << "\t\t Nhap Ho Lot cua sinh vien: ";
+            getline(cin, hoLot);
+            
+            cout << "\t\t Nhap Ten cua sinh vien: ";
+            getline(cin, ten);
         }
 
         // Cap MSSV (toan truong)
@@ -287,12 +366,49 @@ class QuanLySinhVien{
         bool YearValidator(string Year){
             int YearAsInt = stoi(Year);
 
-            if (YearAsInt > 1995 || YearAsInt < currentYear){
+            if (YearAsInt > 1995 && YearAsInt < currentYear){
                 return true;
             }
             else{
                 return false;
             }
+        }
+
+        // Drill Down UI: Ask user for Year -> Faculty -> Class
+            Lop* Select_Lop_UI() {
+            SetColor(14);
+            string namhoc, makhoa;
+
+            // 1. Get Context
+            cout << "\t\t Nhap nam hoc (ex: 2024): ";
+            getline(cin, namhoc);
+            cout << "\t\t Nhap ma khoa (ex: 101): ";
+            getline(cin, makhoa);
+
+            // 2. Find the Faculty & Year objects
+            Khoa* k = FindKhoa(makhoa);
+            if (!k) { /* Error handling... */ return nullptr; }
+            
+            NamHoc* n = k->timNamHoc(namhoc);
+            if (!n) { /* Error handling... */ return nullptr; }
+
+            // 3. Show the list of classes
+            SetColor(11);
+            cout << "\n\t\t\t--- DANH SACH LOP ---\n";
+            auto& listLop = n->get_DanhSachLop();
+            
+            for (size_t i = 0; i < listLop.size(); ++i) {
+                // Print: "1. 24CDT1 (45 sv)"
+                cout << "\t\t\t" << (i + 1) << ". " << listLop[i].Get_TenLop() << "\n";
+            }
+
+            // 4. Return the selection
+            int choice;
+            cout << "\t\t\tChon lop (1-" << listLop.size() << "): ";
+            cin >> choice;
+            // ... validation ...
+            
+            return &listLop[choice - 1];
         }
 
         //clear "lineCount" lines above and move up the same number of lines deleted
@@ -311,6 +427,12 @@ class QuanLySinhVien{
         //pause the screen
         void Pause(){
             system("pause");
+        }
+
+        void Normalize_TenLop(string &TenLop){
+            for (auto &x : TenLop){
+                x = toupper(x);
+            }
         }
 
 

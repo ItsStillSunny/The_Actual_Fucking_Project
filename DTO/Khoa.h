@@ -2,7 +2,6 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include <array>
 #include <ctime>   
 #include "NamHoc.h"
 #include "Lop.h"
