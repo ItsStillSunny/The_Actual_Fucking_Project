@@ -402,27 +402,173 @@ class QuanLySinhVien{
 
         // Tim kiem sinh vien
         void timKiem(){
+            system("cls");
+            cout << "\t\t\t\t\t\t--- Tim kiem sinh vien dua tren MSSV ---\n\n";
+            
+            string MSSV_Cua_SinhVien_Can_Tim;
+            cout << "Nhap MSSV cua sinh vien can tim: ";
+            getline(cin, MSSV_Cua_SinhVien_Can_Tim);
 
+            SinhVien *sv = FindSV(MSSV_Cua_SinhVien_Can_Tim);
+            
+            if (sv == nullptr){
+                cout << "Khong the tim thay sinh vien dua tren MSSV da nhap." << endl;
+            }
+            else{
+                cout << string(60, '-') << endl;
+                sv->Print_SinhVien(); 
+                cout << string(60, '-') << endl;
+            }
         }
 
         // Xoa sinh vien
         void xoaSinhVien(){
+            system("cls");
+            cout << "\t\t\t\t\t\t--- Xoa sinh vien dua tren MSSV ---\n\n";
 
+            string MSSV_Cua_SinhVien_Can_Xoa;
+            cout << "Nhap MSSV cua sinh vien can xoa. ";
+            getline(cin, MSSV_Cua_SinhVien_Can_Xoa);
+
+            bool Found = false;
+
+            for (auto &khoa : DanhSachKhoa) {
+                for (auto &nam : khoa.get_DanhSachNamHoc()) {
+                    for (auto &lop : nam.get_DanhSachLop()) {
+                        SinhVien *sv = lop.Find_SinhVien_By_MSSV(MSSV_Cua_SinhVien_Can_Xoa);
+
+                        if (sv != nullptr){
+                            Found = true;
+                            cout << "Da tim thay sinh vien: " << endl;
+                            cout << string(60, '-') << endl;
+                            sv->Print_SinhVien(); 
+                            cout << string(60, '-') << endl;
+
+                            //deleting time
+                            cout << "Ban co chac chan ban muon xoa sinh vien nay? (Y de dong y, an nut bat ky de huy)" << endl;
+                            char confirm;
+                            if (!(cin >> confirm)) {
+                                cin.clear();
+                                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                                confirm = 'n';
+                            } else {
+                                cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Clear buffer
+                            }
+
+                            //confirmation
+                            if (confirm == "Y" || confirm == "y"){
+                                //it went well
+                                if (lop.Delete_SinhVien_By_MSSV(MSSV_Cua_SinhVien_Can_Xoa)){
+                                    cout << "Xoa thanh cong. " << endl;
+                                }
+                                //it went wrong
+                                else{
+                                    cout << "Da co loi xay ra. " << endl;
+                                }
+                            }
+                            //backed out
+                            else{
+                                cout << "Xoa that bai. (Bi huy boi nguoi dung) " << endl;
+                            }
+                            Pause();
+                            return;
+                        }
+                    }
+                }
+            }
+            if (!Found)
+            {
+                cout << "Khong tim thay sinh vien voi MSSV da nhap. ";
+                Pause();
+            }
         }
 
         // Xuat danh sach theo lop
         void xuatTheoLop(){
+            system("cls");
+            cout << "\t\t\t\t\t\t--- Xuat danh sach lop ---\n\n";
 
+            Lop *lop = Select_Lop_UI();
+            
+            if (lop != nullptr){
+                if (lop->Get_SoLuongSV() == 0){
+                    cout << "LOI: Lop rong." << endl;
+                }
+                else{
+                    lop->Xuat_ds_SV();
+                }
+            }
+            //couldnt find specified Lop
+            else{
+                cout << "Khong tim thay lop. " << endl;
+            }
+
+            Pause();
         }
 
         // Xuat danh sach toan truong
         void xuatToanTruong(){
+            system("cls");
+            cout << "\t\t\t\t\t\t--- Xuat danh sach sinh vien toan truong ---\n\n";
 
-        }
+            bool has_SinhVien = false;
+
+            for (auto &khoa : DanhSachKhoa){
+                for (auto &nam : khoa.get_DanhSachNamHoc()){
+                    for (auto &lop: nam.get_DanhSachLop()){
+
+                        if (lop.Get_SoLuongSV() > 0){
+                            has_SinhVien == true;
+                            lop.Xuat_ds_SV();
+
+                            cout << "\n" << string(107, '=') << "\n";
+                        }
+                    }
+                }
+            }
+
+            if (!has_SinhVien) {
+                cout << "\n\t\t [THONG BAO] He thong hien tai chua co du lieu sinh vien.\n";
+            }
+            Pause();
+            }
 
         // Xuat file lop (.txt)
         void xuatFileLop(){
+            ClearScreen();
+            cout << "\t\t\t\t\t\t--- XUAT DU LIEU LOP RA FILE ---\n\n";
 
+            Lop *lop = Select_Lop_UI();
+
+            if (lop == nullptr){
+                cout << "Lop khong ton tai. " << endl;
+                Pause();
+                return;
+            }
+
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+            if (lop->Get_SoLuongSV() == 0){
+                cout << "Lop rong, khong the xuat file. " << endl;
+                Pause();
+                return;
+            }
+
+            string fileName = lop->Get_TenLop() + ".txt";
+            string fullPath = TargetFolder + "/" + fileName;
+
+            //ensure the folder exist
+            if (!fs::exists(TargetFolder)) {
+                fs::create_directory(TargetFolder);
+            }
+
+            // 4. Save using DataAccess
+            cout << "\n\t\t Dang xuat file: " << fullPath << " ...\n";
+            DataAccess::SaveLopToFile(fullPath, *lop);
+
+            cout << "\t\t [THANH CONG] Da xuat file tai: " << fullPath << "\n";
+            
+            Pause();
         }
 
         //mill
@@ -509,15 +655,35 @@ class QuanLySinhVien{
         { "121", { "Kien truc",           "KT"    } }
         };
 
-        //
-        Khoa* FindKhoa(const string& maKhoa) {
-            for (auto& k : DanhSachKhoa) {
-                if (k.get_MaKhoa() == maKhoa) return &k;
+        //find Khoa based on MaKhoa
+        Khoa *FindKhoa(const string &maKhoa) {
+            for (auto& khoa : DanhSachKhoa) {
+                if (khoa.get_MaKhoa() == maKhoa){
+                    return &khoa;
+                } 
             }
+            //failure: no Khoa found
             return nullptr;
         }
 
-        //check for vampires/ time travellers
+        //find SinhVien based on MSSV
+        SinhVien *FindSV(const string &MSSV){
+            //looper whooper 
+            for (auto &khoa : DanhSachKhoa){
+                for (auto &nam : khoa.get_DanhSachNamHoc()){
+                    for (auto &lop : nam.get_DanhSachLop()){
+                        //oh my, oh my, I have found you, nigga
+                        SinhVien *FoundSV = lop.Find_SinhVien_By_MSSV(MSSV);
+                        return FoundSV;
+                        }
+                    }
+                }
+            }
+            //failure: cant find SinhVien based on MSSV
+            return nullptr;
+        }
+
+        //check for vampires/ time travellers in choosing their year of admission
         bool YearValidator(string Year){
             int YearAsInt = stoi(Year);
 
@@ -529,8 +695,8 @@ class QuanLySinhVien{
             }
         }
 
-        // Drill Down UI: Ask user for Year -> Faculty -> Class
-            Lop* Select_Lop_UI() {
+        //ask user for NamHoc -> Khoa -> Lop
+        Lop *Select_Lop_UI() {
             SetColor(14);
             string namhoc, makhoa;
 
@@ -583,6 +749,4 @@ class QuanLySinhVien{
         void Pause(){
             system("pause");
         }
-
-
 };  
