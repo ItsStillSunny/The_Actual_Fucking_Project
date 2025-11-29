@@ -56,12 +56,15 @@ class Lop{
 
                     string MaKhoa = sv.Get_MaKhoa();
                     string NamHoc = sv.Get_NamHoc();
+
+                    string NamHoc_Formatted = "";
                     //only get the last 2 digts (2 digits starting from the 2nd digit) | ex: 2024 -> 24
                     if (NamHoc.length() >= 4){
                         string NamHoc_Formatted = NamHoc.substr(2,2);
                     }
                     else{
-                        return false;
+                        StartCount--; 
+                        continue;
                     }
 
                     //edit it so it look like XXXX
