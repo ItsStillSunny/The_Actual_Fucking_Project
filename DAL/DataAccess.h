@@ -62,7 +62,7 @@ class DataAccess{
                     }
 
                     SinhVien sv(FirstName, Name, data[2], data[3], data[4], data[6], data[7]);
-                    sv.Set_Email(data[0]);
+                    sv.Set_MSSV(data[0]);
                     sv.Set_Email(data[5]);
                     Single_SinhVien.push_back(sv);
                 }

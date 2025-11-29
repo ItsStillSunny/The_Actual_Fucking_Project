@@ -57,7 +57,12 @@ class Lop{
                     string MaKhoa = sv.Get_MaKhoa();
                     string NamHoc = sv.Get_NamHoc();
                     //only get the last 2 digts (2 digits starting from the 2nd digit) | ex: 2024 -> 24
-                    string NamHoc_Formatted = NamHoc.substr(2,2);
+                    if (NamHoc.length() >= 4){
+                        string NamHoc_Formatted = NamHoc.substr(2,2);
+                    }
+                    else{
+                        return false;
+                    }
 
                     //edit it so it look like XXXX
                     char FormattedCount[5];
@@ -91,30 +96,20 @@ class Lop{
                     string MSSV = sv.Get_MSSV();
                     string NamHoc = sv.Get_NamHoc();
 
-                    int NamHoc_As_int = stoi(NamHoc);
+                    int NamHoc_As_int = 0;
+                    try{
+                        NamHoc_As_int = stoi(NamHoc);
+                    }
+                    catch (...){
+                        continue;
+                    }
 
                     //Email = MSSV + "@sv?.dut.udn.vn"
+                    //consistency purpose ()
+                    int serverIndex = (NamHoc_As_int % 5) + 1; 
 
-                    if (NamHoc_As_int == currentYear){
-                        string NewEmail = MSSV + "@sv1.dut.udn.vn";
-                        sv.Set_Email(NewEmail);
-                    }
-                    else if (NamHoc_As_int == currentYear-1){
-                        string NewEmail = MSSV + "@sv2.dut.udn.vn";
-                        sv.Set_Email(NewEmail);
-                    }
-                    else if (NamHoc_As_int == currentYear-2){
-                        string NewEmail = MSSV + "@sv3.dut.udn.vn";
-                        sv.Set_Email(NewEmail);
-                    }
-                    else if (NamHoc_As_int == currentYear-3){
-                        string NewEmail = MSSV + "@sv4.dut.udn.vn";
-                        sv.Set_Email(NewEmail);
-                    }
-                    else if (NamHoc_As_int == currentYear-4){
-                        string NewEmail = MSSV + "@sv5.dut.udn.vn";
-                        sv.Set_Email(NewEmail);
-                    }
+                    string NewEmail = MSSV + "@sv" + to_string(serverIndex) + ".dut.udn.vn";
+                    sv.Set_Email(NewEmail);
                 }
             }
             return true;

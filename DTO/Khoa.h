@@ -2,7 +2,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include <ctime>   
+#include <algorithm>
 #include "NamHoc.h"
 #include "Lop.h"
 using namespace std;
@@ -12,39 +12,44 @@ class Khoa{
     private:
         string MaKhoa;
         string TenKhoa;
+        string Lop_PostFix;
         vector<NamHoc> DanhSachNamHoc;
 
     //methods
     public:
         //default constructor + actual constructor
         Khoa(){}
-        Khoa(string makhoa, string tenkhoa, string Lop_PostFix) : MaKhoa(makhoa), TenKhoa(tenkhoa) {
+        Khoa(string makhoa, string tenkhoa, string postfix) : MaKhoa(makhoa), TenKhoa(tenkhoa) , Lop_PostFix(postfix);
 
-            //get current year
-            time_t t = time(nullptr);
-            tm* now = localtime(&t);
-            int currentYear = now->tm_year + 1900;
-        
-            //only have classes from year 2000 -> current year
-            for (int earliestYear = 2000; earliestYear <= currentYear; ++earliestYear){
-                string yearAsString = to_string(earliestYear);
-                NamHoc newYear(yearAsString);
 
-                //2024 -> 24
-                string shortYearString = yearAsString.substr(2,2);
 
-                //       24       + T_DT4  = 24T_DT4
-                //shortYearString + prefix = TenLop
-                //i loop from 1 -> 4 aka the 4 Lop of a Khoa
-                for (int i = 0; i <= 4; i++){
+        NamHoc* Get_Or_Create_NamHoc(string namHocStr) {
+            //try to find
+            for (auto& nh : DanhSachNamHoc) {
+                if (nh.get_TenNamHoc() == namHocStr) {
+                    return &nh;
+                }
+            }
+
+            //cant find, create a new one
+            NamHoc newYear(namHocStr);
+
+            //generate the 5 default classes (5 years)
+            if (namHocStr.length() >= 4) {
+                string shortYearString = namHocStr.substr(2, 2); 
+                //loop by 5 years
+                for (int i = 1; i <= 5; i++) {
+                    //24 + T_DT + 1 = 24T_DT1
                     string TenLop = shortYearString + Lop_PostFix + to_string(i);
-
-                    //create Lop based on those information
-                    Lop newLop(TenLop, MaKhoa, yearAsString);
+                    Lop newLop(TenLop, MaKhoa, namHocStr);
                     newYear.themLop(newLop);
                 }
-                DanhSachNamHoc.push_back(newYear);
             }
+
+            DanhSachNamHoc.push_back(newYear);
+            
+            //newly added year is here
+            return &DanhSachNamHoc.back();
         }
 
 

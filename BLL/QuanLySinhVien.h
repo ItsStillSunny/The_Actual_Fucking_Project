@@ -84,7 +84,7 @@ class QuanLySinhVien{
                 if (k != nullptr) {
                     //theres a valid khoa
                     //find namhoc next
-                    n = k->get_NamHoc(namhoc);
+                    n = k->Get_Or_Create_NamHoc(namhoc);
                     if (n != nullptr){
                         //theres a valid namhoc
                         //this ngga not classless anymore, yay
@@ -144,7 +144,7 @@ class QuanLySinhVien{
             cout << "\t\t\t\t\t\t--- THEM SINH VIEN TU FILE ---\n\n";
 
             string filePath;
-            cout << "\t\t Nhap duong dan file: (absolute path | ex: D:/something/abc)"
+            cout << "\t\t Nhap duong dan file: (absolute path | ex: D:/something/abc)";
             getline(cin, filePath);
 
             //DAL importing work
@@ -164,11 +164,11 @@ class QuanLySinhVien{
             for (const auto &sv : importedList){
                 // Find Faculty
                 Khoa* k = FindKhoa(sv.Get_MaKhoa());
-                if (!k) { failCount++; continue; }
+                if (!k) { failed++; continue; }
 
                 // Find Year
-                NamHoc* n = k->timNamHoc(sv.Get_NamHoc());
-                if (!n) { failCount++; continue; }
+                NamHoc* n = k->Get_Or_Create_NamHoc(sv.Get_NamHoc());
+                if (!n) { failed++; continue; }
 
                 // Auto-Assign Overflow (one class full, onto the next one)
                 bool added = false;
@@ -185,7 +185,7 @@ class QuanLySinhVien{
 
             cout << "Successfully added: " << success << " sinh vien.";
             if (failed > 0){
-                cout << "Khong the them vao: " << failed << " sinh vien (loi file/loi du lieu)"
+                cout << "Khong the them vao: " << failed << " sinh vien (loi file/loi du lieu)";
             }
             Pause();
         }
@@ -342,7 +342,7 @@ class QuanLySinhVien{
                 for (auto &nam : khoa.get_DanhSachNamHoc()){
                     int StartCount = 0;
                     for (auto &lop : nam.get_DanhSachLop()){
-                        StartCount += lop.Count_Assigned_SinhVien()
+                        StartCount += lop.Count_Assigned_SinhVien();
                     }
 
                     for (auto &lop : nam.get_DanhSachLop()){
@@ -355,7 +355,7 @@ class QuanLySinhVien{
 
                         if (!success_indicator){
                             SetColor(12);
-                            cout << "Lop: " << lop.Get_TenLop << " chua duoc sap xep, khong the cap MSSV toan truong.";
+                            cout << "Lop: " << lop.Get_TenLop() << " chua duoc sap xep, khong the cap MSSV toan truong.";
                             Pause();
                             return;
                         }
@@ -374,8 +374,7 @@ class QuanLySinhVien{
 
             for (auto &khoa : DanhSachKhoa){
                 for (auto &nam : khoa.get_DanhSachNamHoc()){
-                    for (auto &lop : nam.get_DanhSachLop()){
-                    
+
 
                     for (auto &lop : nam.get_DanhSachLop()){
                         //skip empty classes
@@ -671,26 +670,40 @@ class QuanLySinhVien{
             //looper whooper 
             for (auto &khoa : DanhSachKhoa){
                 for (auto &nam : khoa.get_DanhSachNamHoc()){
+
                     for (auto &lop : nam.get_DanhSachLop()){
                         //oh my, oh my, I have found you, nigga
                         SinhVien *FoundSV = lop.Find_SinhVien_By_MSSV(MSSV);
                         return FoundSV;
                         }
+
                     }
                 }
-            }
             //failure: cant find SinhVien based on MSSV
             return nullptr;
         }
 
+
         //check for vampires/ time travellers in choosing their year of admission
         bool YearValidator(string Year){
-            int YearAsInt = stoi(Year);
+            try{
+                //stoi require size_t, dont ask
+                size_t pos;
+                int YearAsInt = stoi(Year, &pos);
 
-            if (YearAsInt > 1995 && YearAsInt < currentYear){
-                return true;
+                if (pos < Year.length()) {
+                    return false; 
+                }
+
+                if (YearAsInt > 1995 && YearAsInt < currentYear){
+                    return true;
+                }
+                else{
+                    return false;
+                }
             }
-            else{
+            //if it cant convert (aka there exist letter in the number, throw an error)
+            catch (...){
                 return false;
             }
         }
