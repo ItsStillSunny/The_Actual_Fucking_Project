@@ -342,7 +342,7 @@ class QuanLySinhVien{
                 for (auto &nam : khoa.get_DanhSachNamHoc()){
                     int StartCount = 0;
                     for (auto &lop : nam.get_DanhSachLop()){
-                        StartCount += lop.Count_Assigned_SinhVien();
+                        StartCount += lop.Count_Assigned_SinhVien(currentMaKhoa);
                     }
 
                     for (auto &lop : nam.get_DanhSachLop()){
@@ -386,18 +386,18 @@ class QuanLySinhVien{
 
                         if (!success_indicator){
                             SetColor(12);
-                            cout << "Lop: " << lop.Get_TenLop << " chua duoc cap MSSV, khong the cap Email toan truong.";
+                            cout << "Lop: " << lop.Get_TenLop() << " chua duoc cap MSSV, khong the cap Email toan truong.";
                             Pause();
                             return;
                         }
                     }
                 }
             }
-        }
             SetColor(10);
             cout << "Da cap Email cho toan truong thanh cong.";
             Pause();
         }
+            
 
         // Tim kiem sinh vien
         void timKiem(){
@@ -455,7 +455,7 @@ class QuanLySinhVien{
                             }
 
                             //confirmation
-                            if (confirm == "Y" || confirm == "y"){
+                            if (confirm == 'Y' || confirm == 'y'){
                                 //it went well
                                 if (lop.Delete_SinhVien_By_MSSV(MSSV_Cua_SinhVien_Can_Xoa)){
                                     cout << "Xoa thanh cong. " << endl;
@@ -723,7 +723,7 @@ class QuanLySinhVien{
             Khoa* k = FindKhoa(makhoa);
             if (!k) { /* Error handling... */ return nullptr; }
             
-            NamHoc* n = k->timNamHoc(namhoc);
+            NamHoc* n = k->get_NamHoc(namhoc);
             if (!n) { /* Error handling... */ return nullptr; }
 
             // 3. Show the list of classes

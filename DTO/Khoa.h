@@ -19,7 +19,7 @@ class Khoa{
     public:
         //default constructor + actual constructor
         Khoa(){}
-        Khoa(string makhoa, string tenkhoa, string postfix) : MaKhoa(makhoa), TenKhoa(tenkhoa) , Lop_PostFix(postfix)
+        Khoa(string makhoa, string tenkhoa, string postfix) : MaKhoa(makhoa), TenKhoa(tenkhoa) , Lop_PostFix(postfix) {}
 
         //try to find NamHoc, create if not found
         NamHoc* Get_Or_Create_NamHoc(string namHocStr) {

@@ -60,7 +60,7 @@ class Lop{
                     string NamHoc_Formatted = "";
                     //only get the last 2 digts (2 digits starting from the 2nd digit) | ex: 2024 -> 24
                     if (NamHoc.length() >= 4){
-                        string NamHoc_Formatted = NamHoc.substr(2,2);
+                        NamHoc_Formatted = NamHoc.substr(2,2);
                     }
                     else{
                         StartCount--; 
