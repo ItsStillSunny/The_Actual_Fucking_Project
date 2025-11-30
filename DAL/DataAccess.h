@@ -62,8 +62,18 @@ class DataAccess{
                     }
 
                     SinhVien sv(FirstName, Name, data[2], data[3], data[4], data[6], data[7]);
-                    sv.Set_MSSV(data[0]);
-                    sv.Set_Email(data[5]);
+
+                    // Check if MSSV exists in file data
+                    if (!data[0].empty()) {
+                        sv.Set_MSSV(data[0]); 
+                        // Set_MSSV already sets checkMSSV = true in your class, so this is good.
+                    }
+
+                    // Check if Email exists
+                    if (!data[5].empty()) {
+                        sv.Set_Email(data[5]);
+                    }
+                    
                     Single_SinhVien.push_back(sv);
                 }
             }
@@ -72,7 +82,7 @@ class DataAccess{
         }
 
         //save data
-        static void SaveData(const string &DataFolder, const vector<Khoa> database){
+        static void SaveData(const string &DataFolder, const vector<Khoa> &database){
             //if folder (named DataFolder) doesnt exist, create it
             if (!fs::exists(DataFolder)){
                 fs::create_directory(DataFolder);

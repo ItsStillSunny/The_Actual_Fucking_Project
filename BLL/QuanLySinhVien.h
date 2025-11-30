@@ -674,9 +674,11 @@ class QuanLySinhVien{
                     for (auto &lop : nam.get_DanhSachLop()){
                         //oh my, oh my, I have found you, nigga
                         SinhVien *FoundSV = lop.Find_SinhVien_By_MSSV(MSSV);
-                        return FoundSV;
+                        if (FoundSV != nullptr){
+                            return FoundSV; 
                         }
 
+                        }
                     }
                 }
             //failure: cant find SinhVien based on MSSV

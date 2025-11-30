@@ -3,6 +3,7 @@
 using namespace std;
 
 int main() {
+    SetConsoleOutputCP(65001);
     QuanLySinhVien ql;
     ql.intro();
     ql.menu();
