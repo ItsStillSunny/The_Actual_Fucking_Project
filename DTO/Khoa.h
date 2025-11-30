@@ -38,7 +38,7 @@ class Khoa{
                 //loop by 5 years
                 for (int i = 1; i <= 5; i++) {
                     //24 + T_DT + 1 = 24T_DT1
-                    std::string TenLop = shortYearString + Lop_PostFix + to_string(i);
+                    std::string TenLop = shortYearString + Lop_PostFix + std::to_string(i);
                     Lop newLop(TenLop, MaKhoa, namHocStr);
                     newYear.themLop(newLop);
                 }

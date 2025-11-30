@@ -563,7 +563,7 @@ class QuanLySinhVien{
 
             // 4. Save using DataAccess
             cout << "\n\t\t Dang xuat file: " << fullPath << " ...\n";
-            DataAccess::SaveLopToFile(fullPath, *lop);
+            DataAccess::SaveLopToFile(fullPath.string(), *lop);
 
             cout << "\t\t [THANH CONG] Da xuat file tai: " << fullPath << "\n";
             

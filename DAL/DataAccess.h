@@ -8,14 +8,13 @@
 #include "../DTO/SinhVien.h"
 #include "../DTO/Khoa.h"
 
-using namespace std;
 namespace fs = std::filesystem;
 
 class DataAccess{
     public:
         //load all files in folder via way of loading every single files in the folder (depend on LoadSingleData)
-        static vector<SinhVien> LoadAllData(const string &folder){
-            vector<SinhVien> All_SinhVien;
+        static std::vector<SinhVien> LoadAllData(const std::string &folder){
+            std::vector<SinhVien> All_SinhVien;
 
             //folder doesnt exist (fail)
             if (!fs::exists(folder) || !fs::is_directory(folder)) {
@@ -25,7 +24,7 @@ class DataAccess{
             //each entry is a file
             for (const auto &entry : fs::directory_iterator(folder)){
                 if (entry.path().extension() == ".txt"){
-                    vector<SinhVien> FileSinhVien = LoadSingleData(entry.path().string());
+                    std::vector<SinhVien> FileSinhVien = LoadSingleData(entry.path().string());
                     All_SinhVien.insert(All_SinhVien.end(), FileSinhVien.begin(), FileSinhVien.end());
                 }
             }
@@ -33,16 +32,16 @@ class DataAccess{
         }
 
         //load each and every single file, read thingies
-        static vector<SinhVien> LoadSingleData(const string &filepath){
-            vector<SinhVien> Single_SinhVien;
-            ifstream file(filepath);
+        static std::vector<SinhVien> LoadSingleData(const std::string &filepath){
+            std::vector<SinhVien> Single_SinhVien;
+            std::ifstream file(filepath);
             if (!file.is_open()) return Single_SinhVien;
 
-            string line;
+            std::string line;
             while (getline(file, line)){
-                stringstream ss(line);
-                string segment;
-                vector<string> data;
+                std::stringstream ss(line);
+                std::string segment;
+                std::vector<std::string> data;
 
                 while (getline(ss, segment, '|')) {
                     data.push_back(segment);
@@ -50,11 +49,11 @@ class DataAccess{
 
                 //crack ts up shouja boy
                 if (data.size() >= 8){
-                    string FullName = data[1];
-                    string FirstName = "", Name = "";
+                    std::string FullName = data[1];
+                    std::string FirstName = "", Name = "";
                     size_t LastSpace = FullName.find_last_of(" ");
 
-                    if (LastSpace != string::npos){
+                    if (LastSpace != std::string::npos){
                         FirstName = FullName.substr(0, LastSpace);
                         Name = FullName.substr(LastSpace + 1);
                     }
@@ -84,7 +83,7 @@ class DataAccess{
         }
 
         //save data
-        static void SaveData(const string &DataFolder, const vector<Khoa> &database){
+        static void SaveData(const std::string &DataFolder, const std::vector<Khoa> &database){
             //if folder (named DataFolder) doesnt exist, create it
             if (!fs::exists(DataFolder)){
                 fs::create_directory(DataFolder);
@@ -92,7 +91,7 @@ class DataAccess{
 
             //find where it is
             fs::path AbsolutePath = fs::absolute(DataFolder);
-            cout << "[DAL] data is stored at: " << AbsolutePath << endl;
+            std::cout << "[DAL] data is stored at: " << AbsolutePath << std::endl;
 
             //save all files within DataFolder
 
@@ -104,7 +103,7 @@ class DataAccess{
                     for (const auto& lop : namHoc.get_DanhSachLop()) {
                         if (lop.Get_SoLuongSV() > 0) {
                             // Build path: Data/101_24CDT1.txt
-                            string filename = DataFolder + "/" + khoa.get_MaKhoa() + "_" + lop.Get_TenLop() + ".txt";
+                            std::string filename = DataFolder + "/" + khoa.get_MaKhoa() + "_" + lop.Get_TenLop() + ".txt";
                             SaveLopToFile(filename, lop);
                             FileCount++;
                         }
@@ -113,24 +112,24 @@ class DataAccess{
             }
 
             if (FileCount == 0){
-                cout << "No data to be saved.";
+                std::cout << "No data to be saved.";
             }
             else{
-                cout << "Successfully saved: " << FileCount << " files." << endl;
+                std::cout << "Successfully saved: " << FileCount << " files." << std::endl;
             }
         }
 
         //save just a single Lop
-        static void SaveLopToFile(const string &FileName, const Lop &lop){
-            ofstream file(FileName);
+        static void SaveLopToFile(const std::string &FileName, const Lop &lop){
+            std::ofstream file(FileName);
             if (file.is_open()){
                 for (const auto &sv : lop.get_DanhSach()){
-                    file << sv.to_File() << endl;
+                    file << sv.to_File() << std::endl;
                 }
                 file.close();
             }
             else{
-                cout << "[DAL] Can't write to file named: " << FileName << "." << endl;
+                std::cout << "[DAL] Can't write to file named: " << FileName << "." << std::endl;
             }
         }
 

@@ -91,14 +91,14 @@ class SinhVien{
 
         //displayer
         void Print_SinhVien() const {
-            std::cout << left; 
-            std::cout << setw(5)  << Stt;
-            std::cout << setw(12) << MSSV;
-            std::cout << setw(20) << HoLot;
-            std::cout << setw(10) << Ten;
-            std::cout << setw(10) << GioiTinh;
-            std::cout << setw(15) << NgaySinh;
-            std::cout << setw(35) << Email << endl;
+            std::cout << std::left; 
+            std::cout << std::setw(5)  << Stt;
+            std::cout << std::setw(12) << MSSV;
+            std::cout << std::setw(20) << HoLot;
+            std::cout << std::setw(10) << Ten;
+            std::cout << std::setw(10) << GioiTinh;
+            std::cout << std::setw(15) << NgaySinh;
+            std::cout << std::setw(35) << Email << std::endl;
         }
 
 

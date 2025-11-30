@@ -18,12 +18,6 @@ class Lop{
         std::string MaKhoa;
         std::string NamHoc;
         std::vector<SinhVien> ds_SV; 
-        //get current year
-        time_t t = time(nullptr);
-        tm now;
-        localtime_s(&now, &t); 
-        int currentYear = now.tm_year + 1900;
-
     
     //methods
     public:
@@ -33,6 +27,13 @@ class Lop{
 
         //set the maximum number of SinhVIen that can be in a singular Lop
         static const int MAX_SV = 50;
+
+        static int GetCurrentYear() {
+            time_t t = time(nullptr);
+            tm now;
+            localtime_s(&now, &t); 
+            return now.tm_year + 1900;
+        }
 
         //Assign MSSV to a Lop ONLY IF all SinhVien is sorted
         bool Assign_MSSV_To_Lop(int &StartCount){
@@ -100,7 +101,7 @@ class Lop{
 
                     int NamHoc_As_int = 0;
                     try{
-                        NamHoc_As_int = stoi(NamHoc);
+                        NamHoc_As_int = std::stoi(NamHoc);
                     }
                     catch (...){
                         continue;
@@ -110,7 +111,7 @@ class Lop{
                     //consistency purpose ()
                     int serverIndex = (NamHoc_As_int % 5) + 1; 
 
-                    std::string NewEmail = MSSV + "@sv" + to_string(serverIndex) + ".dut.udn.vn";
+                    std::string NewEmail = MSSV + "@sv" + std::to_string(serverIndex) + ".dut.udn.vn";
                     sv.Set_Email(NewEmail);
                 }
             }
@@ -180,7 +181,7 @@ class Lop{
 
         //sort all SinhVien within a lop by alphabetic order
         void Sort_SinhVien_In_Lop_By_Ten(){
-            sort(ds_SV.begin(), ds_SV.end(), [](const SinhVien &a, const SinhVien &b) {
+            std::sort(ds_SV.begin(), ds_SV.end(), [](const SinhVien &a, const SinhVien &b) {
                 if (a.Get_Ten() != b.Get_Ten())
                     return a.Get_Ten() < b.Get_Ten();
                 
@@ -202,15 +203,15 @@ class Lop{
             std::cout << "\n\n\t\t\t\t\t\tKHOA: " << MaKhoa << "\n";
             std::cout << "\n\n\t\t\t\t\t\tDANH SACH LOP: " << MaKhoa << " - " << "Khoa hoc " << NamHoc << "\n";
 
-            std::cout << left;
-            std::cout << setw(5) << "STT";
-            std::cout << setw(12) << "MSSV";
-            std::cout << setw(20) << "Ho Lot";
-            std::cout << setw(10) << "Ten";
-            std::cout << setw(10) << "Gioi Tinh";
-            std::cout << setw(15) << "Ngay Sinh";
-            std::cout << setw(35) << "Email" << endl;
-            std::cout << std::string(107, '-') << endl;
+            std::cout << std::left;
+            std::cout << std::setw(5) << "STT";
+            std::cout << std::setw(12) << "MSSV";
+            std::cout << std::setw(20) << "Ho Lot";
+            std::cout << std::setw(10) << "Ten";
+            std::cout << std::setw(10) << "Gioi Tinh";
+            std::cout << std::setw(15) << "Ngay Sinh";
+            std::cout << std::setw(35) << "Email" << std::endl;
+            std::cout << std::string(107, '-') << std::endl;
 
             for (const SinhVien &sv: ds_SV){ 
                 sv.Print_SinhVien();
