@@ -52,11 +52,13 @@ class DataAccess{
                 if (data.size() >= 8){
                     string FullName = data[1];
                     string FirstName = "", Name = "";
-                    size_t LastSpace = FullName.find_first_of(" ");
+                    size_t LastSpace = FullName.find_last_of(" ");
+
                     if (LastSpace != string::npos){
                         FirstName = FullName.substr(0, LastSpace);
                         Name = FullName.substr(LastSpace + 1);
                     }
+
                     else{
                         Name = FullName;
                     }

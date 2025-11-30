@@ -285,7 +285,7 @@ class QuanLySinhVien{
                     sv->Print_SinhVien(); 
                     cout << string(60, '-') << endl;
 
-                    //the list of options to change
+                    //the list of options to change 
                     cout << " 1. Sua Ho Lot\n";
                     cout << " 2. Sua Ten\n";
                     cout << " 3. Sua Gioi Tinh\n";
@@ -554,7 +554,7 @@ class QuanLySinhVien{
             }
 
             string fileName = lop->Get_TenLop() + ".txt";
-            string fullPath = TargetFolder + "/" + fileName;
+            fs::path fullPath = fs::path(TargetFolder) / fileName;
 
             //ensure the folder exist
             if (!fs::exists(TargetFolder)) {
@@ -741,9 +741,18 @@ class QuanLySinhVien{
             // 4. Return the selection
             int choice;
             cout << "\t\t\tChon lop (1-" << listLop.size() << "): ";
-            cin >> choice;
-            // ... validation ...
-            
+
+            //validate choice 
+            //error case:
+
+            //cant be less than 0, nor higher than the limit
+            while (!(cin >> choice) || choice < 1 || choice > listLop.size()) {
+                cout << "\t\t\tLua chon khong hop le. Nhap lai: ";
+                cin.clear(); //clear the error flags
+                cin.ignore(numeric_limits<streamsize>::max(), '\n'); //YEET the bad outputs
+            }
+            cin.ignore(numeric_limits<streamsize>::max(), '\n'); //clear new line from buffer
+
             return &listLop[choice - 1];
         }
 
