@@ -9,28 +9,27 @@
 #include <algorithm>
 #include <limits>
 #include <ctime>
-
 #include "SinhVien.h"
-using namespace std;
 
 class Lop{
     //attributes
     private:
-        string TenLop;
-        string MaKhoa;
-        string NamHoc;
-        vector<SinhVien> ds_SV; 
+        std::string TenLop;
+        std::string MaKhoa;
+        std::string NamHoc;
+        std::vector<SinhVien> ds_SV; 
         //get current year
         time_t t = time(nullptr);
-        tm* now = localtime(&t);
-        int currentYear = now->tm_year + 1900;
+        tm now;
+        localtime_s(&now, &t); 
+        int currentYear = now.tm_year + 1900;
 
     
     //methods
     public:
         //default constructor + actual constructor
         Lop() {}
-        Lop(string tenlop, string makhoa, string namhoc) : TenLop(tenlop), MaKhoa(makhoa), NamHoc(namhoc) {}
+        Lop(std::string tenlop, std::string makhoa, std::string namhoc) : TenLop(tenlop), MaKhoa(makhoa), NamHoc(namhoc) {}
 
         //set the maximum number of SinhVIen that can be in a singular Lop
         static const int MAX_SV = 50;
@@ -41,7 +40,7 @@ class Lop{
                 //failure
                 if (sv.Is_Sorted() == false)
                 {   
-                    cout << "Lop chua duoc sap xep, chua the cap MSSV.";
+                    std::cout << "Lop chua duoc sap xep, chua the cap MSSV.";
                     return false;
                 }
             }
@@ -54,10 +53,10 @@ class Lop{
                 else{
                     StartCount++;
 
-                    string MaKhoa = sv.Get_MaKhoa();
-                    string NamHoc = sv.Get_NamHoc();
+                    std::string MaKhoa = sv.Get_MaKhoa();
+                    std::string NamHoc = sv.Get_NamHoc();
 
-                    string NamHoc_Formatted = "";
+                    std::string NamHoc_Formatted = "";
                     //only get the last 2 digts (2 digits starting from the 2nd digit) | ex: 2024 -> 24
                     if (NamHoc.length() >= 4){
                         NamHoc_Formatted = NamHoc.substr(2,2);
@@ -72,7 +71,7 @@ class Lop{
                     snprintf(FormattedCount, sizeof(FormattedCount), "%04d", StartCount);
 
                     //"102" + "24" + "0152"
-                    string NewMSSV = MaKhoa + NamHoc_Formatted + FormattedCount;
+                    std::string NewMSSV = MaKhoa + NamHoc_Formatted + FormattedCount;
                     sv.Set_MSSV(NewMSSV);
                 }         
             }
@@ -85,7 +84,7 @@ class Lop{
                 //failure
                 if (sv.Has_MSSV() == false)
                 {   
-                    cout << "Lop chua duoc cap MSSV, chua the cap Email.";
+                    std::cout << "Lop chua duoc cap MSSV, chua the cap Email.";
                     return false;
                 }
             }
@@ -96,8 +95,8 @@ class Lop{
                     continue;
                 }
                 else{
-                    string MSSV = sv.Get_MSSV();
-                    string NamHoc = sv.Get_NamHoc();
+                    std::string MSSV = sv.Get_MSSV();
+                    std::string NamHoc = sv.Get_NamHoc();
 
                     int NamHoc_As_int = 0;
                     try{
@@ -111,7 +110,7 @@ class Lop{
                     //consistency purpose ()
                     int serverIndex = (NamHoc_As_int % 5) + 1; 
 
-                    string NewEmail = MSSV + "@sv" + to_string(serverIndex) + ".dut.udn.vn";
+                    std::string NewEmail = MSSV + "@sv" + to_string(serverIndex) + ".dut.udn.vn";
                     sv.Set_Email(NewEmail);
                 }
             }
@@ -130,13 +129,13 @@ class Lop{
                 return true;
             }
             else{
-                cout << "Max sinh vien limit reached, unable to add more.";
+                std::cout << "Max sinh vien limit reached, unable to add more.";
                 return false;
             }
 
         }
 
-        bool Delete_SinhVien_By_MSSV(const string& mssv) {
+        bool Delete_SinhVien_By_MSSV(const std::string& mssv) {
             
             //find where SinhVien is
             auto sinhvien = std::find_if(ds_SV.begin(), ds_SV.end(), [&](const SinhVien& tempsv) 
@@ -157,7 +156,7 @@ class Lop{
         //finders by name & by MSSV
 
         //find SinhVien by name
-        SinhVien *Select_SinhVien_By_Name(const string &holot, const string &ten){
+        SinhVien *Select_SinhVien_By_Name(const std::string &holot, const std::string &ten){
             for (SinhVien& sv : ds_SV) {
                 if (sv.Get_HoLot() == holot && sv.Get_Ten() == ten) {
                     return &sv; 
@@ -168,7 +167,7 @@ class Lop{
         
 
         //find the SinhVien based on MSSV
-        SinhVien* Find_SinhVien_By_MSSV(const string& mssv) {
+        SinhVien* Find_SinhVien_By_MSSV(const std::string& mssv) {
             //loop to find
             for (SinhVien& sv : ds_SV) {
                 if (sv.Get_MSSV() == mssv) {
@@ -196,22 +195,22 @@ class Lop{
 
         //show all SinhVien within a Lop
         void Xuat_ds_SV() const{
-            cout << ("\n\n\t\t\t\t\t\tTRUONG DAI HOC BACH KHOA - DAI HOC DA NANG\n");
-            string MaKhoa = Get_MaKhoa();
-            string TenLop = Get_TenLop();
-            string NamHoc = Get_NamHoc();
-            cout << "\n\n\t\t\t\t\t\tKHOA: " << MaKhoa << "\n";
-            cout << "\n\n\t\t\t\t\t\tDANH SACH LOP: " << MaKhoa << " - " << "Khoa hoc " << NamHoc << "\n";
+            std::cout << ("\n\n\t\t\t\t\t\tTRUONG DAI HOC BACH KHOA - DAI HOC DA NANG\n");
+            std::string MaKhoa = Get_MaKhoa();
+            std::string TenLop = Get_TenLop();
+            std::string NamHoc = Get_NamHoc();
+            std::cout << "\n\n\t\t\t\t\t\tKHOA: " << MaKhoa << "\n";
+            std::cout << "\n\n\t\t\t\t\t\tDANH SACH LOP: " << MaKhoa << " - " << "Khoa hoc " << NamHoc << "\n";
 
-            cout << left;
-            cout << setw(5) << "STT";
-            cout << setw(12) << "MSSV";
-            cout << setw(20) << "Ho Lot";
-            cout << setw(10) << "Ten";
-            cout << setw(10) << "Gioi Tinh";
-            cout << setw(15) << "Ngay Sinh";
-            cout << setw(35) << "Email" << endl;
-            cout << string(107, '-') << endl;
+            std::cout << left;
+            std::cout << setw(5) << "STT";
+            std::cout << setw(12) << "MSSV";
+            std::cout << setw(20) << "Ho Lot";
+            std::cout << setw(10) << "Ten";
+            std::cout << setw(10) << "Gioi Tinh";
+            std::cout << setw(15) << "Ngay Sinh";
+            std::cout << setw(35) << "Email" << endl;
+            std::cout << std::string(107, '-') << endl;
 
             for (const SinhVien &sv: ds_SV){ 
                 sv.Print_SinhVien();
@@ -219,7 +218,7 @@ class Lop{
         }
 
         //How many SinhVien got MaKhoa?
-        int Count_Assigned_SinhVien(const string& maKhoa) {
+        int Count_Assigned_SinhVien(const std::string& maKhoa) {
         int count = 0;
         for (const SinhVien& sv : ds_SV) {
             if (sv.Get_MaKhoa() == maKhoa && sv.Has_MSSV()) {
@@ -232,18 +231,18 @@ class Lop{
 
     //getters
     int Get_SoLuongSV() const {return ds_SV.size();}
-    string Get_MaKhoa() const {return MaKhoa;}
-    string Get_TenLop() const {return TenLop;}
-    string Get_NamHoc() const {return NamHoc;}
+    std::string Get_MaKhoa() const {return MaKhoa;}
+    std::string Get_TenLop() const {return TenLop;}
+    std::string Get_NamHoc() const {return NamHoc;}
 
 
     //setters
-    void Set_TenLop(const string& ten) { TenLop = ten; }
-    void Set_MaKhoa(const string& ten) { MaKhoa = ten; }
-    void Set_NamHoc(const string& nam) { NamHoc = nam; }
+    void Set_TenLop(const std::string& ten) { TenLop = ten; }
+    void Set_MaKhoa(const std::string& ten) { MaKhoa = ten; }
+    void Set_NamHoc(const std::string& nam) { NamHoc = nam; }
 
     //file handling
-    size_t Add_DanhSach_Tu_File(const vector<SinhVien>& list) {
+    size_t Add_DanhSach_Tu_File(const std::vector<SinhVien>& list) {
     //added is a number representating the number of sinh vien added in this process (ex: da them thanh cong 45 sinh vien something something)
     size_t added = 0;
     for (const auto& sv : list) {
@@ -261,5 +260,5 @@ class Lop{
     }
 
     //read
-    const vector<SinhVien>& get_DanhSach() const { return ds_SV; }
+    const std::vector<SinhVien>& get_DanhSach() const { return ds_SV; }
 };

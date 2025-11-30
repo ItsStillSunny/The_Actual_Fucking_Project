@@ -6,23 +6,22 @@
 #include <iomanip>
 #include <algorithm>
 #include <limits>
-using namespace std;
 
 class SinhVien{
     //attributes
     private:
-        string HoLot;
-        string Ten;
-        string GioiTinh;
-        string NgaySinh;
-        string DiaChi;
+        std::string HoLot;
+        std::string Ten;
+        std::string GioiTinh;
+        std::string NgaySinh;
+        std::string DiaChi;
         int Stt;
-        string Email;
-        string MSSV;
-        string MaKhoa;
-        string TenKhoa;
-        string Lop;
-        string NamHoc;  
+        std::string Email;
+        std::string MSSV;
+        std::string MaKhoa;
+        std::string TenKhoa;
+        std::string Lop;
+        std::string NamHoc;  
         bool checkSort; 
         bool checkMSSV; 
         bool checkEmail;
@@ -30,7 +29,7 @@ class SinhVien{
     public:
         //default constructor + actual constructor
         SinhVien() {}
-        SinhVien(string ho, string ten, string gioitinh, string ngaysinh, string diachi, string makhoa, string nam) :
+        SinhVien(std::string ho, std::string ten, std::string gioitinh, std::string ngaysinh, std::string diachi, std::string makhoa, std::string nam) :
             HoLot(ho),
             Ten(ten),
             GioiTinh(gioitinh),
@@ -51,39 +50,39 @@ class SinhVien{
 
         //setters
         void Set_checkSort(bool status) {checkSort = status;}
-        void Set_MSSV(const string &newMssv){
+        void Set_MSSV(const std::string &newMssv){
             MSSV = newMssv;
             checkMSSV = true;
         }
-        void Set_Email(const string &newEmail){
+        void Set_Email(const std::string &newEmail){
             Email = newEmail;
             checkEmail = true;
         }
 
-        void Set_HoLot(const string& ho) { HoLot = ho; }
-        void Set_Ten(const string& ten) { Ten = ten; }
-        void Set_GioiTinh(const string& gt) { GioiTinh = gt; }
-        void Set_NgaySinh(const string& ns) { NgaySinh = ns; }
-        void Set_DiaChi(const string& dc) { DiaChi = dc; }
-        void Set_MaKhoa(const string& mk) { MaKhoa = mk; }
-        void Set_NamHoc(const string& nh) { NamHoc = nh; }
+        void Set_HoLot(const std::string& ho) { HoLot = ho; }
+        void Set_Ten(const std::string& ten) { Ten = ten; }
+        void Set_GioiTinh(const std::string& gt) { GioiTinh = gt; }
+        void Set_NgaySinh(const std::string& ns) { NgaySinh = ns; }
+        void Set_DiaChi(const std::string& dc) { DiaChi = dc; }
+        void Set_MaKhoa(const std::string& mk) { MaKhoa = mk; }
+        void Set_NamHoc(const std::string& nh) { NamHoc = nh; }
 
 
         //getters
-        string Get_MaKhoa() const {return MaKhoa;}
-        string Get_NamHoc() const {return NamHoc;}
-        string Get_MSSV() const {return MSSV;}
-        string Get_Ten() const {return Ten;}
-        string Get_HoLot() const {return HoLot;}
+        std::string Get_MaKhoa() const {return MaKhoa;}
+        std::string Get_NamHoc() const {return NamHoc;}
+        std::string Get_MSSV() const {return MSSV;}
+        std::string Get_Ten() const {return Ten;}
+        std::string Get_HoLot() const {return HoLot;}
 
-        string Get_HoVaTen() const{
+        std::string Get_HoVaTen() const{
             if (HoLot.empty()) return Ten;
         return HoLot + " " + Ten;
         }
 
-        string Get_GioiTinh() const {return GioiTinh;}
-        string Get_DiaChi() const {return DiaChi;}
-        string Get_NgaySinh() const {return NgaySinh;}
+        std::string Get_GioiTinh() const {return GioiTinh;}
+        std::string Get_DiaChi() const {return DiaChi;}
+        std::string Get_NgaySinh() const {return NgaySinh;}
 
         bool Is_Sorted() const {return checkSort;}
         bool Has_MSSV() const {return checkMSSV;}
@@ -92,19 +91,19 @@ class SinhVien{
 
         //displayer
         void Print_SinhVien() const {
-            cout << left; 
-            cout << setw(5) << Stt;
-            cout << setw(12) << MSSV;
-            cout << setw(20) << HoLot;
-            cout << setw(10) << Ten;
-            cout << setw(10) << GioiTinh;
-            cout << setw(15) << NgaySinh;
-            cout << setw(35) << Email << endl;
+            std::cout << left; 
+            std::cout << setw(5)  << Stt;
+            std::cout << setw(12) << MSSV;
+            std::cout << setw(20) << HoLot;
+            std::cout << setw(10) << Ten;
+            std::cout << setw(10) << GioiTinh;
+            std::cout << setw(15) << NgaySinh;
+            std::cout << setw(35) << Email << endl;
         }
 
 
         //format then save to file
-        string to_File() const{
+        std::string to_File() const{
             return MSSV + "|" + Get_HoVaTen() + "|" + GioiTinh + "|" +
                NgaySinh + "|" + DiaChi + "|" + Email + "|" +
                MaKhoa + "|" + NamHoc;
