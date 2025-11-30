@@ -5,24 +5,23 @@
 #include <algorithm>
 #include "NamHoc.h"
 #include "Lop.h"
-using namespace std;
 
 class Khoa{
     //attributes
     private:
-        string MaKhoa;
-        string TenKhoa;
-        string Lop_PostFix;
-        vector<NamHoc> DanhSachNamHoc;
+        std::string MaKhoa;
+        std::string TenKhoa;
+        std::string Lop_PostFix;
+        std::vector<NamHoc> DanhSachNamHoc;
 
     //methods
     public:
         //default constructor + actual constructor
         Khoa(){}
-        Khoa(string makhoa, string tenkhoa, string postfix) : MaKhoa(makhoa), TenKhoa(tenkhoa) , Lop_PostFix(postfix) {}
+        Khoa(std::string makhoa, std::string tenkhoa, std::string postfix) : MaKhoa(makhoa), TenKhoa(tenkhoa) , Lop_PostFix(postfix) {}
 
         //try to find NamHoc, create if not found
-        NamHoc* Get_Or_Create_NamHoc(string namHocStr) {
+        NamHoc* Get_Or_Create_NamHoc(std::string namHocStr) {
             //try to find
             for (auto& nh : DanhSachNamHoc) {
                 if (nh.get_TenNamHoc() == namHocStr) {
@@ -35,11 +34,11 @@ class Khoa{
 
             //generate the 5 default classes (5 years)
             if (namHocStr.length() >= 4) {
-                string shortYearString = namHocStr.substr(2, 2); 
+                std::string shortYearString = namHocStr.substr(2, 2); 
                 //loop by 5 years
                 for (int i = 1; i <= 5; i++) {
                     //24 + T_DT + 1 = 24T_DT1
-                    string TenLop = shortYearString + Lop_PostFix + to_string(i);
+                    std::string TenLop = shortYearString + Lop_PostFix + to_string(i);
                     Lop newLop(TenLop, MaKhoa, namHocStr);
                     newYear.themLop(newLop);
                 }
@@ -53,23 +52,23 @@ class Khoa{
 
 
         //getters/setters
-        string get_MaKhoa() const {return MaKhoa;}
-        string get_TenKhoa() const {return TenKhoa;}
+        std::string get_MaKhoa() const {return MaKhoa;}
+        std::string get_TenKhoa() const {return TenKhoa;}
         
 
 
         //write (BLL)
-        vector<NamHoc> &get_DanhSachNamHoc() { 
+        std::vector<NamHoc> &get_DanhSachNamHoc() { 
             return DanhSachNamHoc; 
         }
 
         //read (DAL)
-        const vector<NamHoc> &get_DanhSachNamHoc() const { 
+        const std::vector<NamHoc> &get_DanhSachNamHoc() const { 
             return DanhSachNamHoc; 
         } 
 
         //search NamHoc
-        NamHoc* get_NamHoc(string nam) {
+        NamHoc* get_NamHoc(std::string nam) {
             for (auto& nh : DanhSachNamHoc) {
                 if (nh.get_TenNamHoc() == nam) return &nh;
             }
