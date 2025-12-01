@@ -90,9 +90,9 @@ class SinhVien{
 
 
         //displayer
-        void Print_SinhVien() const {
+        void Print_SinhVien(int Real_Stt) const {
             std::cout << std::left; 
-            std::cout << std::setw(5)  << Stt;
+            std::cout << std::setw(5)  << Real_Stt;
             std::cout << std::setw(12) << MSSV;
             std::cout << std::setw(20) << HoLot;
             std::cout << std::setw(10) << Ten;

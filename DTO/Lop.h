@@ -67,6 +67,7 @@ class Lop{
                     }
 
                     //edit it so it look like XXXX
+                    //only good for up to 10k people, but at that point you should consider using another, professionally made program instead of relying on a 2nd year student
                     char FormattedCount[5];
                     snprintf(FormattedCount, sizeof(FormattedCount), "%04d", StartCount);
 
@@ -103,6 +104,8 @@ class Lop{
                         NamHoc_As_int = std::stoi(NamHoc);
                     }
                     catch (...){
+                        //some guys just did some fucking bullshit year like cyberpunk 696969420 whateverwhatever so we gotta let him know that he is a stupid fucker who shouldnt have been born
+                        std::cerr << "Invalid year: " << NamHoc << "\n";
                         continue;
                     }
 
@@ -211,6 +214,10 @@ class Lop{
             std::cout << std::setw(15) << "Ngay Sinh";
             std::cout << std::setw(35) << "Email" << std::endl;
             std::cout << std::string(107, '-') << std::endl;
+
+            for (size_t i = 0; i < ds_SV.size(); ++i){ 
+                ds_SV[i].Print_SinhVien(i + 1); // Pass i + 1
+            }
 
             for (const SinhVien &sv: ds_SV){ 
                 sv.Print_SinhVien();

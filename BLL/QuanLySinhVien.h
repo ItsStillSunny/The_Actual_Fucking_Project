@@ -292,7 +292,7 @@ class QuanLySinhVien{
                     //blah blah blah
                     //-------------------------------
                     cout << string(60, '-') << endl;
-                    sv->Print_SinhVien(); 
+                    sv->Print_SinhVien(1); 
                     cout << string(60, '-') << endl;
 
                     //the list of options to change 
@@ -425,7 +425,7 @@ class QuanLySinhVien{
             }
             else{
                 cout << string(60, '-') << endl;
-                sv->Print_SinhVien(); 
+                sv->Print_SinhVien(1); 
                 cout << string(60, '-') << endl;
             }
         }
@@ -450,7 +450,7 @@ class QuanLySinhVien{
                             Found = true;
                             cout << "Da tim thay sinh vien: " << endl;
                             cout << string(60, '-') << endl;
-                            sv->Print_SinhVien(); 
+                            sv->Print_SinhVien(1); 
                             cout << string(60, '-') << endl;
 
                             //deleting time
@@ -700,9 +700,11 @@ class QuanLySinhVien{
 
                 int curYear = GetCurrentYear();
 
-                if (pos < Year.length()) {
-                    return false; 
+                //wont crash anymore if some fucking cunt just typed in "2025       " like what kind of psychopath even does that?
+                while (pos < Year.length() && isspace(Year[pos])) {
+                    pos++;
                 }
+                if (pos < Year.length()) { return false; } //garbage value "123asdasd" or something idk
 
                 if (YearAsInt > 1995 && YearAsInt < curYear){
                     return true;
