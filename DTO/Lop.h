@@ -63,8 +63,7 @@ class Lop{
                         NamHoc_Formatted = NamHoc.substr(2,2);
                     }
                     else{
-                        StartCount--; 
-                        continue;
+                        NamHoc_Formatted = "00";
                     }
 
                     //edit it so it look like XXXX

@@ -27,6 +27,14 @@ class QuanLySinhVien{
     private:
         vector<Khoa> DanhSachKhoa;
         string TargetFolder = "data";
+
+        //get the current year
+        int GetCurrentYear() {
+            time_t t = time(nullptr);
+            tm now;
+            localtime_s(&now, &t); 
+            return now.tm_year + 1900;
+        }
     //methods
     public:
         //constructor gaming
@@ -48,10 +56,12 @@ class QuanLySinhVien{
             Khoa* k = nullptr;
             NamHoc* n = nullptr;
 
+            int curYear = GetCurrentYear();
+
             while(true){
                 cout << "\t\t--- THEM SINH VIEN MOI ---\n";
-                cout << "Nhap nam hoc (ex: " << currentYear << "): \n";
-                cout << "Valid range is from 1995 to " << currentYear << endl;
+                cout << "Nhap nam hoc (ex: " << curYear << "): \n";
+                cout << "Valid range is from 1995 to " << curYear << endl;
                 getline(cin, namhoc);
 
                 //is it valid?
@@ -572,11 +582,6 @@ class QuanLySinhVien{
 
         //mill
 
-        //get current year
-            time_t t = time(nullptr);
-            tm* now = localtime(&t);
-            int currentYear = now->tm_year + 1900;
-
         //showing intro
         void intro() {
             ClearScreen();
@@ -693,11 +698,13 @@ class QuanLySinhVien{
                 size_t pos;
                 int YearAsInt = stoi(Year, &pos);
 
+                int curYear = GetCurrentYear();
+
                 if (pos < Year.length()) {
                     return false; 
                 }
 
-                if (YearAsInt > 1995 && YearAsInt < currentYear){
+                if (YearAsInt > 1995 && YearAsInt < curYear){
                     return true;
                 }
                 else{
@@ -746,7 +753,7 @@ class QuanLySinhVien{
             //error case:
 
             //cant be less than 0, nor higher than the limit
-            while (!(cin >> choice) || choice < 1 || choice > listLop.size()) {
+            while (!(cin >> choice) || choice < 1 || choice > (int)listLop.size()) {
                 cout << "\t\t\tLua chon khong hop le. Nhap lai: ";
                 cin.clear(); //clear the error flags
                 cin.ignore(numeric_limits<streamsize>::max(), '\n'); //YEET the bad outputs
