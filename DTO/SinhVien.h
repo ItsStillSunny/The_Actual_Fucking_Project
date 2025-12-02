@@ -66,12 +66,23 @@ class SinhVien{
         void Set_DiaChi(const std::string& dc) { DiaChi = dc; }
         void Set_MaKhoa(const std::string& mk) { MaKhoa = mk; }
         void Set_NamHoc(const std::string& nh) { NamHoc = nh; }
+        void Set_Lop(const std::string& l) { Lop = l; }
+
 
 
         //getters
         std::string Get_MaKhoa() const {return MaKhoa;}
         std::string Get_NamHoc() const {return NamHoc;}
         std::string Get_MSSV() const {return MSSV;}
+        std::string Get_Lop() const { return Lop; }
+
+        int Get_MSSV_Suffix() const {
+            if (MSSV.length() < 4) return 0;
+            try {
+                return std::stoi(MSSV.substr(MSSV.length() - 4));
+            } catch (...) { return 0; }
+        }
+
         std::string Get_Ten() const {return Ten;}
         std::string Get_HoLot() const {return HoLot;}
 
@@ -106,6 +117,6 @@ class SinhVien{
         std::string to_File() const{
             return MSSV + "|" + Get_HoVaTen() + "|" + GioiTinh + "|" +
                NgaySinh + "|" + DiaChi + "|" + Email + "|" +
-               MaKhoa + "|" + NamHoc;
+               MaKhoa + "|" + NamHoc + "|" + Lop;
         }
 };

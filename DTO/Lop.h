@@ -17,13 +17,14 @@ class Lop{
         std::string TenLop;
         std::string MaKhoa;
         std::string NamHoc;
+        bool isSorted = false;
         std::vector<SinhVien> ds_SV; 
     
     //methods
     public:
         //default constructor + actual constructor
         Lop() {}
-        Lop(std::string tenlop, std::string makhoa, std::string namhoc) : TenLop(tenlop), MaKhoa(makhoa), NamHoc(namhoc) {}
+        Lop(std::string tenlop, std::string makhoa, std::string namhoc) : TenLop(tenlop), MaKhoa(makhoa), NamHoc(namhoc), isSorted(false) {}
 
         //set the maximum number of SinhVIen that can be in a singular Lop
         static const int MAX_SV = 50;
@@ -33,6 +34,18 @@ class Lop{
             tm now;
             localtime_s(&now, &t); 
             return now.tm_year + 1900;
+        }
+
+
+        int Get_Max_MSSV_Suffix(const std::string& maKhoa) {
+            int maxSuffix = 0;
+            for (const SinhVien& sv : ds_SV) {
+                if (sv.Get_MaKhoa() == maKhoa && sv.Has_MSSV()) {
+                    int currentSuffix = sv.Get_MSSV_Suffix();
+                    if (currentSuffix > maxSuffix) maxSuffix = currentSuffix;
+                }
+            }
+            return maxSuffix;
         }
 
         //Assign MSSV to a Lop ONLY IF all SinhVien is sorted
@@ -129,6 +142,7 @@ class Lop{
                 newSV.Set_MaKhoa(MaKhoa);
                 newSV.Set_NamHoc(NamHoc);
                 ds_SV.push_back(newSV);
+                isSorted = false;
                 return true;
             }
             else{
@@ -193,6 +207,8 @@ class Lop{
             for (SinhVien& sv : ds_SV) {
                 sv.Set_checkSort(true);
             }
+
+            isSorted = true;
         }
 
 
@@ -213,14 +229,11 @@ class Lop{
             std::cout << std::setw(10) << "Gioi Tinh";
             std::cout << std::setw(15) << "Ngay Sinh";
             std::cout << std::setw(35) << "Email" << std::endl;
+            //seperator
             std::cout << std::string(107, '-') << std::endl;
 
             for (size_t i = 0; i < ds_SV.size(); ++i){ 
                 ds_SV[i].Print_SinhVien(i + 1); // Pass i + 1
-            }
-
-            for (const SinhVien &sv: ds_SV){ 
-                sv.Print_SinhVien();
             }
         }
 

@@ -44,6 +44,39 @@ class QuanLySinhVien{
                 Khoa newKhoa(makhoa, info.TenKhoa, info.Lop_PostFix);
                 DanhSachKhoa.push_back(newKhoa);
             }
+
+            //make sure that the folder exist
+            if (!fs::exists(TargetFolder)){
+                fs::create_directory(TargetFolder);
+            }
+
+            //load all data
+            vector<SinhVien> allData = DataAccess::LoadAllData(TargetFolder);
+            for (const auto &sinhvien : allData){
+                Khoa *khoa = FindKhoa(sinhvien.Get_MaKhoa());
+                if (k) {
+                    NamHoc *nam = khoa->Get_Or_Create_NamHoc(sv.Get_NamHoc());
+                    if (n) {
+                        //finding specific class
+                        bool Added = false;
+                        if (!sinhvien.Get_Lop().empty){
+                            Lop *lop = nam->timLop(sinhvien.Get_Lop());
+                            if (lop) {
+                                lop->Add_SinhVien(sinhvien);
+                                Added = true;
+                            }
+                            //add to any available class because it failed
+                            if (!Added){
+                                for (auto &lop : nam->get_DanhSachLop()){
+                                    if (lop.Add_SinhVien(sinhvien));
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+
+            }
         }
 
         //the thingies mazingies used for the 11 human souls
@@ -119,13 +152,23 @@ class QuanLySinhVien{
 
             //standard stuff
             //yea i dont care anymore about dob, you can be a vampire or time traveller, whatever float your boat
-            //EDIT: add dob protection against vampire and/or time traveller, fuck them, deadline 25/11/2025
+            //SanitizeInput is there so no matter how stupid the user can be, this can still work
             string ho, ten, gioitinh, ngaysinh, diachi;
             cout << "Ho va ten lot: "; getline(cin, ho);
+            ho = SanitizeInput(ho);
+
             cout << "Ten: "; getline(cin, ten);
+            ten = SanitizeInput(ten);
+
             cout << "Gioi tinh: "; getline(cin, gioitinh);
+            gioitinh = SanitizeInput(gioitinh);
+
             cout << "Ngay sinh: "; getline(cin, ngaysinh);
+            ngaysinh = SanitizeInput(ngaysinh);
+
             cout << "Dia chi: "; getline(cin, diachi);
+            diachi = SanitizeInput(diachi);
+
 
             SinhVien sv(ho, ten, gioitinh, ngaysinh, diachi, "", "");
 
@@ -276,12 +319,14 @@ class QuanLySinhVien{
                 Pause();
                 return;
             }
+
             //can find, but already has MSSV
             else if (sv != nullptr && sv->Has_MSSV() == true){
                 cout << "Tim thay sinh vien, sinh vien da co MSSV, khong the chinh sua.";
                 Pause();
                 return;
             }
+
             //fucking finally
             else{
                 while (true){
@@ -320,6 +365,8 @@ class QuanLySinhVien{
                     string newVal;
                     cout << " Nhap gia tri moi: ";
                     getline(cin, newVal);
+                    //sanitize
+                    newVal = SanitizeInput(newVal);
 
                     switch (choice) {
                         case 1: sv->Set_HoLot(newVal); break;
@@ -350,9 +397,13 @@ class QuanLySinhVien{
                 string currentMaKhoa = khoa.get_MaKhoa();
 
                 for (auto &nam : khoa.get_DanhSachNamHoc()){
+
                     int StartCount = 0;
                     for (auto &lop : nam.get_DanhSachLop()){
-                        StartCount += lop.Count_Assigned_SinhVien(currentMaKhoa);
+                        int LopMax = lop.Get_Max_MSSV_Suffix(currentMaKhoa);
+                        if (LopMax > StartCount){
+                            StartCount = LopMax;
+                        }
                     }
 
                     for (auto &lop : nam.get_DanhSachLop()){
@@ -420,14 +471,13 @@ class QuanLySinhVien{
 
             SinhVien *sv = FindSV(MSSV_Cua_SinhVien_Can_Tim);
             
-            if (sv == nullptr){
-                cout << "Khong the tim thay sinh vien dua tren MSSV da nhap." << endl;
+            if (sv != nullptr){
+                sv->Print_SinhVien(1);
             }
             else{
-                cout << string(60, '-') << endl;
-                sv->Print_SinhVien(1); 
-                cout << string(60, '-') << endl;
+                cout << "Khong tim thay sinh vien voi MSSV: " << MSSV_Cua_SinhVien_Can_Tim << endl;
             }
+            Pause();
         }
 
         // Xoa sinh vien
@@ -438,6 +488,7 @@ class QuanLySinhVien{
             string MSSV_Cua_SinhVien_Can_Xoa;
             cout << "Nhap MSSV cua sinh vien can xoa. ";
             getline(cin, MSSV_Cua_SinhVien_Can_Xoa);
+            MSSV_Cua_SinhVien_Can_Xoa = SanitizeInput(MSSV_Cua_SinhVien_Can_Xoa);
 
             bool Found = false;
 
@@ -719,6 +770,13 @@ class QuanLySinhVien{
             }
         }
 
+        //clean the string up so it is fit for DAL
+        string SanitizeInput(string input) {
+            // Replace pipe '|' with hyphen '-' to prevent file corruption
+            replace(input.begin(), input.end(), '|', '-'); 
+            return input;
+        }
+
         //ask user for NamHoc -> Khoa -> Lop
         Lop *Select_Lop_UI() {
             SetColor(14);
@@ -741,7 +799,13 @@ class QuanLySinhVien{
             SetColor(11);
             cout << "\n\t\t\t--- DANH SACH LOP ---\n";
             auto& listLop = n->get_DanhSachLop();
+            //empty
+            if (listLop.empty()) {
+                cout << "\t\t\t [!] Khong co lop nao trong nam hoc nay!\n";
+                return nullptr;
+            }
             
+            //NOT empty, go on
             for (size_t i = 0; i < listLop.size(); ++i) {
                 // Print: "1. 24CDT1 (45 sv)"
                 cout << "\t\t\t" << (i + 1) << ". " << listLop[i].Get_TenLop() << "\n";

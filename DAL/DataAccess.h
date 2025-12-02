@@ -47,7 +47,7 @@ class DataAccess{
                     data.push_back(segment);
                 }
 
-                //crack ts up shouja boy
+                //break up ho va ten correctly
                 if (data.size() >= 8){
                     std::string FullName = data[1];
                     std::string FirstName = "", Name = "";
@@ -57,22 +57,25 @@ class DataAccess{
                         FirstName = FullName.substr(0, LastSpace);
                         Name = FullName.substr(LastSpace + 1);
                     }
-
                     else{
                         Name = FullName;
                     }
 
                     SinhVien sv(FirstName, Name, data[2], data[3], data[4], data[6], data[7]);
 
-                    // Check if MSSV exists in file data
+                    //check if MSSV exists in file data
                     if (!data[0].empty()) {
                         sv.Set_MSSV(data[0]); 
-                        // Set_MSSV already sets checkMSSV = true in your class, so this is good.
                     }
 
-                    // Check if Email exists
+                    //check if Email exists
                     if (!data[5].empty()) {
                         sv.Set_Email(data[5]);
+                    }
+
+                    //
+                    if (data.size() > 8 && !data[8].empty()) {
+                        sv.Set_Lop(data[8]); 
                     }
                     
                     Single_SinhVien.push_back(sv);
