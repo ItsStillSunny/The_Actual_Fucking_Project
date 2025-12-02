@@ -54,12 +54,12 @@ class QuanLySinhVien{
             vector<SinhVien> allData = DataAccess::LoadAllData(TargetFolder);
             for (const auto &sinhvien : allData){
                 Khoa *khoa = FindKhoa(sinhvien.Get_MaKhoa());
-                if (k) {
-                    NamHoc *nam = khoa->Get_Or_Create_NamHoc(sv.Get_NamHoc());
-                    if (n) {
+                if (khoa) {
+                    NamHoc *nam = khoa->Get_Or_Create_NamHoc(sinhvien.Get_NamHoc());
+                    if (nam) {
                         //finding specific class
                         bool Added = false;
-                        if (!sinhvien.Get_Lop().empty){
+                        if (!sinhvien.Get_Lop().empty()){
                             Lop *lop = nam->timLop(sinhvien.Get_Lop());
                             if (lop) {
                                 lop->Add_SinhVien(sinhvien);
